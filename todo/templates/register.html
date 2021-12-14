@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block form %}
+    <div>
+        <form method="post">
+            <label>login</label><br>
+            <input name="login" id="login"><br>
+            <label>password</label><br>
+            <input name="password" id="password"><br>
+            <input type="submit" value="Add">
+
+        </form>
+    </div>
+{% endblock %}
+
+{% block test %}
+    {% for user in users %}
+        <ul>
+            <li>{{user.login}}</li>
+        </ul>
+    {% endfor %}
+{% endblock %}
+
+{% block error %}
+    {{error}}
+{% endblock %}
+
+
