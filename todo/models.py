@@ -28,3 +28,4 @@ class Announcement(db.Model):
 
     def __repr__(self):
         return '< Announcement%r>' % self.id
+

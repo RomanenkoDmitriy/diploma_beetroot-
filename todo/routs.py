@@ -54,3 +54,4 @@ def user_logout():
 @login_required
 def secret():
     return render_template('secret.html')
+
