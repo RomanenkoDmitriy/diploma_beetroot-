@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block form %}
+    <form method="post">
+        <h3><label>Title</label></h3><br>
+        <input name="title"><br>
+        <h3><label>Text</label></h3><br>
+        <input name="text" type="text"><br>
+        <input type="submit" value="Create">
+    </form>
+{% endblock %}
+
+{% block messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block error %}
+    {{error}}
+{% endblock %}

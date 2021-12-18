@@ -4,6 +4,21 @@
 <h1>Hello!</h1>
 {% endblock %}
 
+{% block messages %}
+
+    <div>
+
+        {% for anonc in announcement %}
+            <div>
+                <h2>{{anonc.title}}</h2>
+                <p>{{anonc.text[:50]}}</p>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    {% endblock %}
+
 
 {% block error %}
     {{resp}}

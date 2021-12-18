@@ -17,7 +17,7 @@ class User (db.Model, UserMixin):
     email = db.Column(db.String, unique=True)
     data = db.Column(db.DateTime, default=datetime.utcnow())
     avatar = db.Column(db.String)
-    announcement = db.relationship('Announcement', backref='announcement', lazy=True)
+    announcement = db.relationship('Announcement', backref='user', lazy=True)
 
     def change_login(self, login):
         self.login = login
@@ -47,9 +47,13 @@ class Announcement(db.Model):
     title = db.Column(db.String(150), nullable=False)
     text = db.Column(db.TEXT, nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow())
-    path_img = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    images_announcement = db.relationship('ImagesAnnouncement', backref='announcement', lazy=True)
 
-    def __repr__(self):
-        return '< Announcement%r>' % self.id
+
+class ImagesAnnouncement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    path_img = db.Column(db.String)
+    id_announcement = db.Column(db.Integer, db.ForeignKey('announcement.id'), nullable=False)
+
 
