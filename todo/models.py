@@ -7,15 +7,39 @@ from todo import db, manager
 
 @manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
 
 
 class User (db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String, unique=True, nullable=False)
     user_hash = db.Column(db.TEXT, nullable=False)
-    announcement = db.relationship('Announcement', backref='announcement', lazy=True)
+    email = db.Column(db.String, unique=True)
     data = db.Column(db.DateTime, default=datetime.utcnow())
+    avatar = db.Column(db.String)
+    announcement = db.relationship('Announcement', backref='announcement', lazy=True)
+
+    def change_login(self, login):
+        self.login = login
+        db.session.add(self)
+        db.session.commit()
+
+    def change_password(self, password):
+        self.user_hash = password
+        db.session.add(self)
+        db.session.commit()
+
+    def change_email(self, email):
+        self.email = email
+        db.session.add(self)
+        db.session.commit()
+
+    def del_user(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def add_avatar(self):
+        pass
 
 
 class Announcement(db.Model):

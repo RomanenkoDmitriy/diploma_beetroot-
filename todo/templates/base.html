@@ -5,18 +5,26 @@
     <title>Title</title>
 </head>
 <body>
-{% block nav %}
+
     <div>
         <nav>
             <a href="{{ url_for('register') }}" >register</a>
             <a href="{{ url_for('login_user_page') }}" >login</a>
             <a href="{{ url_for('user_logout') }}">logout</a>
-            <a href="{{ url_for('index') }}">index</a>
+            <a href="{{ url_for('index_page') }}">index</a>
             <a href="{{ url_for('secret') }}">secret</a>
+            {% if current_user.login %}
+                <a href="{{ url_for('personal_area') }}">personal area</a>
+            {% endif %}
         </nav>
     </div>
+{% block nav %}
 {% endblock %}
+
 {% block form %}
+{% endblock %}
+
+{% block messages %}
 {% endblock %}
 
 {% block test %}
