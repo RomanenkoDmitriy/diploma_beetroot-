@@ -6,12 +6,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user
 
 from todo import app
-from todo.models import User, db, load_user
+from todo.models import User, db, Announcement, ImagesAnnouncement
 
 
 @app.route('/')
 def index_page():
-    return render_template('index.html', resp=flask_login.current_user)
+    if Announcement.query.all():
+        return render_template('index.html', announcement=Announcement.query.all())
+    return render_template('index.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -71,6 +73,7 @@ def user_logout():
 def secret():
     return render_template('secret.html')
 
+
 @app.route('/personal_area', methods=['GET', 'POST'])
 @login_required
 def personal_area():
@@ -84,9 +87,10 @@ def personal_area():
         email = request.form.get('email')
         delete_user = request.form.get('delete')
         file = request.files.get('avatar')
-        return render_template('personal_area.html', file=file)
-        path = os.path.join(os.getcwd(), 'static', f'{user.login}.jpg')
-        file.save(path)
+        anonc = request.form.get('anonc')
+
+        if anonc:
+            return redirect('create_announcement')
 
         if login:
             user.change_login(login)
@@ -112,11 +116,27 @@ def personal_area():
     return render_template('personal_area.html')
 
 
+@app.route('/create_announcement', methods=['GET', 'POST'])
+@login_required
+def create_announcement():
+    title = request.form.get('title')
+    text = request.form.get('text')
+
+    if request.method == 'POST':
+        new_announcement = Announcement(title=title, text=text)
+        try:
+            db.session.add(new_announcement)
+            db.session.commit()
+            flash('Announcement created')
+        except Exception as e:
+            db.session.rollback()
+            return render_template('add_announcement.html', error=str(e))
+    return render_template('add_announcement.html')
 
 # @app.after_request
 # @login_required
 # def redirect_page(response):
-#     # if response.status.code == 401:
-#     #     return redirect(f'{url_for("login_user_page")}?next={request.url}')
+#     if response.status.code == 401:
+#         return redirect(f'{url_for("login_user_page")}?next={request.url}')
 #     return response
-#
+
