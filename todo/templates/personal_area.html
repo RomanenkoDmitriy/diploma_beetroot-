@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block form %}
+
+    <form method="post">
+        <h3><label>Avatar</label></h3><br>
+        <input name="avatar" type="image"><br>
+        <input name="avatar" type="file"><br>
+        <input type="submit" value="Add">
+    </form>
+
+    <form method="post">
+        <h3><label>Change login</label></h3><br>
+        <input name="login"><br>
+        <input type="submit" value="Chenge">
+    </form>
+
+{% block messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+    <form method="post">
+        <h3><label>Change password</label></h3><br>
+        <label>Old password</label><br>
+        <input name="old_password"><br>
+        <label>New password</label><br>
+        <input name="new_password"><br>
+        <input type="submit" value="Chenge">
+    </form>
+
+      <form method="post">
+          <h3><label>Change email</label></h3><br>
+        <input name="email"><br>
+        <input type="submit" value="Chenge">
+    </form>
+
+    <form method="post">
+          <h3><label>Delete account</label></h3><br>
+        <input name="delete" type="hidden" value="delete"><br>
+        <input type="submit" value="Delete">
+    </form>
+{% endblock %}
+
+{% block error %}
+    {{file}}
+{% endblock %}

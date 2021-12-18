@@ -1,14 +1,29 @@
 {% extends 'base.html' %}
 
+{% block messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
 {% block form %}
     <div>
         <form method="post">
             <label>login</label><br>
             <input name="login" id="login"><br>
+            <label>Email</label><br>
+            <input name="email" id="email"><br>
             <label>password</label><br>
             <input name="password" id="password"><br>
+            <label>Repeat password</label><br>
+            <input name="password1" id="password1"><br>
             <input type="submit" value="Add">
-
         </form>
     </div>
 {% endblock %}
