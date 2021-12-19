@@ -15,6 +15,9 @@
             <a href="{{ url_for('secret') }}">secret</a>
             {% if current_user.login %}
                 <a href="{{ url_for('personal_area') }}">personal area</a>
+                {% if current_user.avatar %}
+                    <img src="{{ url_for('static', filename=current_user.avatar) }}">
+                {% endif %}
             {% endif %}
         </nav>
     </div>

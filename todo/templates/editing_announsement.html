@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block form %}
+    {% for anonc in announsement %}
+        <div>
+            <form method="post">
+                <h3><label>{{anonc.title}}</label></h3><br>
+                <p>{{anonc.text}}</p>
+
+                <a href="{{ url_for('change_anons', id_anons=anonc.id) }}"><input type="button" value="Change"></a>
+            </form>
+
+            <form method="post">
+
+                <input name="delete" type="hidden" value="{{anonc.id}}">
+                <input name="delete" type="submit" value="Delete">
+            </form>
+
+        </div>
+    {%endfor%}
+{% endblock %}

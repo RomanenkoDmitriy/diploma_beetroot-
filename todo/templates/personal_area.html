@@ -7,8 +7,12 @@
     </form>
 
     <form method="post">
+        <h3><label>Editing announcement</label></h3><br>
+        <input name="editing" type="submit" value="Edit">
+    </form>
+
+    <form method="post" enctype="multipart/form-data">
         <h3><label>Avatar</label></h3><br>
-        <input name="avatar" type="image"><br>
         <input name="avatar" type="file"><br>
         <input type="submit" value="Add">
     </form>
@@ -54,5 +58,5 @@
 {% endblock %}
 
 {% block error %}
-    {{file}}
+    {{path}}
 {% endblock %}
