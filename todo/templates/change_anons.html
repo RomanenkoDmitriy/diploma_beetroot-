@@ -6,13 +6,12 @@
             <h3>{{chenge_anons.title}}</h3>
             <input name="title">
             <p>{{chenge_anons.text}}</p>
-            <input name="id_anons" type="hidden" value="{{chenge_anons.id}}">
             <input name="text"><br>
+            <input name="id_anons" type="hidden" value="{{chenge_anons.id}}">
             <input type="submit" value="Chenge"><br><hr>
         </form>
         <form method="post">
-            <input type="hidden" name="back" value="back">
-            <input type="submit" value="Back">
+            <a href="{{ url_for('editing_announcement') }}"><input type="button" value="Back"></a>
         </form>
 
     </div>

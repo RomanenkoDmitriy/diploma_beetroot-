@@ -1,12 +1,14 @@
-import os
+from os.path import join, dirname, realpath
 
 import flask_login
 from flask import request, render_template, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from flask_login import login_user, login_required, logout_user, current_user
 
-from todo import app
+from todo import app, UPLOAD_FOLDER
 from todo.models import User, db, Announcement, ImagesAnnouncement
+from .utils.utils import avatar_img
 
 
 @app.route('/')
@@ -94,27 +96,31 @@ def personal_area():
             return redirect('create_announcement')
         if editing:
             return redirect('editing_announcement')
+        try:
+            if login:
+                user.change_login(login)
+                return render_template('personal_area.html', user=User.query.filter_by(id=user_id).first().login)
+            elif old_password and new_password:
 
-        if login:
-            user.change_login(login)
-            return render_template('personal_area.html', user=User.query.filter_by(id=user_id).first().login)
-        elif old_password and new_password:
+                if check_password_hash(user.user_hash, old_password):
+                    user.change_password(generate_password_hash(new_password))
+                    return render_template('personal_area.html', user=User.query.filter_by(id=user_id).first().user_hash)
+                else:
+                    flash('Invalid password')
 
-            if check_password_hash(user.user_hash, old_password):
-                user.change_password(generate_password_hash(new_password))
-                return render_template('personal_area.html', user=User.query.filter_by(id=user_id).first().user_hash)
-            else:
-                flash('Invalid password')
-
-        elif email:
-            user.change_email(email)
-            return render_template('personal_area.html', user=User.query.filter_by(id=user_id).first().email)
-        elif delete_user:
-            user.del_user()
-            return redirect(url_for('index_page'))
-        elif file:
-            path = os.path.join(os.getcwd(), 'static', f'{user.login}.jpg')
-            file.save(path)
+            elif email:
+                user.change_email(email)
+                return render_template('personal_area.html', user=User.query.filter_by(id=user_id).first().email)
+            elif delete_user:
+                user.del_user()
+                return redirect(url_for('index_page'))
+            elif file:
+                path = join(dirname(realpath(__file__)), 'static', secure_filename(file.filename))
+                avatar_img(file, path)
+                # file.save(path)
+                # user.add_avatar(file.filename)
+        except Exception as e:
+            pass
 
     return render_template('personal_area.html')
 
@@ -152,15 +158,15 @@ def editing_announcement():
     return render_template('editing_announsement.html', announsement=current_user.announcement_table)
 
 
-@app.route('/change_anons', methods=['GET', 'POST'])
+@app.route('/<int:id_anons>/change_anons', methods=['GET', 'POST'])
 @login_required
-def change_anons():
+def change_anons(id_anons):
     title = request.form.get('title')
     text = request.form.get('text')
-    id_anons = request.form.get('id_anons')
+
     if request.method == 'POST':
-        return render_template('change_anons.html', ia_a=id_anons)
         anons = Announcement.query.filter_by(id=id_anons).first()
+
         if title and text:
             anons.change_title(title)
             anons.change_text(text)
@@ -168,7 +174,8 @@ def change_anons():
             anons.change_title(title)
         elif text:
             anons.change_text(text)
-    return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=change).first())
+
+    return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=id_anons).first())
 
 
 # @app.after_request

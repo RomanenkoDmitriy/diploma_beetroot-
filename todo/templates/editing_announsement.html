@@ -6,8 +6,8 @@
             <form method="post">
                 <h3><label>{{anonc.title}}</label></h3><br>
                 <p>{{anonc.text}}</p>
-                <input name="change" type="hidden" value="{{anonc.id}}">
-                <input type="submit" value="Change">
+
+                <a href="{{ url_for('change_anons', id_anons=anonc.id) }}"><input type="button" value="Change"></a>
             </form>
 
             <form method="post">

@@ -39,8 +39,11 @@ class User (db.Model, UserMixin):
         db.session.delete(self)
         db.session.commit()
 
-    def add_avatar(self):
-        pass
+    def add_avatar(self, path):
+        self.avatar = path
+        db.session.add(self)
+        db.session.commit()
+
 
 
 class Announcement(db.Model):
