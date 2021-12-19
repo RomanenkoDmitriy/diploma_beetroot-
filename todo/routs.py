@@ -3,7 +3,7 @@ import os
 import flask_login
 from flask import request, render_template, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 
 from todo import app
 from todo.models import User, db, Announcement, ImagesAnnouncement
@@ -12,7 +12,7 @@ from todo.models import User, db, Announcement, ImagesAnnouncement
 @app.route('/')
 def index_page():
     if Announcement.query.all():
-        return render_template('index.html', announcement=Announcement.query.all())
+        return render_template('index.html', announcement=Announcement.query.order_by(Announcement.date.desc()).all())
     return render_template('index.html')
 
 
@@ -88,9 +88,12 @@ def personal_area():
         delete_user = request.form.get('delete')
         file = request.files.get('avatar')
         anonc = request.form.get('anonc')
+        editing = request.form.get('editing')
 
         if anonc:
             return redirect('create_announcement')
+        if editing:
+            return redirect('editing_announcement')
 
         if login:
             user.change_login(login)
@@ -123,15 +126,50 @@ def create_announcement():
     text = request.form.get('text')
 
     if request.method == 'POST':
-        new_announcement = Announcement(title=title, text=text)
+        new_announcement = Announcement(title=title, text=text, user_id=current_user.id)
         try:
             db.session.add(new_announcement)
             db.session.commit()
             flash('Announcement created')
+            return render_template('add_announcement.html', anonc=current_user.announcement_table)
         except Exception as e:
             db.session.rollback()
             return render_template('add_announcement.html', error=str(e))
-    return render_template('add_announcement.html')
+    return render_template('add_announcement.html', anonc=current_user.announcement_table)
+
+
+@app.route('/editing_announcement', methods=['GET', 'POST'])
+@login_required
+def editing_announcement():
+    change = request.form.get('change')
+    del_anons = request.form.get('delete')
+    if request.method == 'POST':
+        if del_anons:
+            anons = Announcement.query.filter_by(id=del_anons).first()
+            anons.del_announcement()
+        elif change:
+            return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=change).first())
+    return render_template('editing_announsement.html', announsement=current_user.announcement_table)
+
+
+@app.route('/change_anons', methods=['GET', 'POST'])
+@login_required
+def change_anons():
+    title = request.form.get('title')
+    text = request.form.get('text')
+    id_anons = request.form.get('id_anons')
+    if request.method == 'POST':
+        return render_template('change_anons.html', ia_a=id_anons)
+        anons = Announcement.query.filter_by(id=id_anons).first()
+        if title and text:
+            anons.change_title(title)
+            anons.change_text(text)
+        elif title:
+            anons.change_title(title)
+        elif text:
+            anons.change_text(text)
+    return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=change).first())
+
 
 # @app.after_request
 # @login_required

@@ -11,13 +11,14 @@ def load_user(user_id):
 
 
 class User (db.Model, UserMixin):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String, unique=True, nullable=False)
     user_hash = db.Column(db.TEXT, nullable=False)
     email = db.Column(db.String, unique=True)
     data = db.Column(db.DateTime, default=datetime.utcnow())
     avatar = db.Column(db.String)
-    announcement = db.relationship('Announcement', backref='user', lazy=True)
+    announcement_table = db.relationship('Announcement', backref='user')
 
     def change_login(self, login):
         self.login = login
@@ -43,15 +44,32 @@ class User (db.Model, UserMixin):
 
 
 class Announcement(db.Model):
+    __tablename__ = 'announcement'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     text = db.Column(db.TEXT, nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    images_announcement = db.relationship('ImagesAnnouncement', backref='announcement', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    images_announcement = db.relationship('ImagesAnnouncement', backref='announcement')
+
+    def change_title(self, title):
+        self.title = title
+        db.session.add(self)
+        db.session.commit()
+
+    def change_text(self, text):
+        self.text = text
+        db.session.add(self)
+        db.session.commit()
+
+    def del_announcement(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 class ImagesAnnouncement(db.Model):
+    __tablename__ = 'images_announcement'
+
     id = db.Column(db.Integer, primary_key=True)
     path_img = db.Column(db.String)
     id_announcement = db.Column(db.Integer, db.ForeignKey('announcement.id'), nullable=False)

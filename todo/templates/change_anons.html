@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block form %}
+    <div>
+        <form method="post">
+            <h3>{{chenge_anons.title}}</h3>
+            <input name="title">
+            <p>{{chenge_anons.text}}</p>
+            <input name="id_anons" type="hidden" value="{{chenge_anons.id}}">
+            <input name="text"><br>
+            <input type="submit" value="Chenge"><br><hr>
+        </form>
+        <form method="post">
+            <input type="hidden" name="back" value="back">
+            <input type="submit" value="Back">
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block error %}
+    {{id_a}}
+{% endblock %}
