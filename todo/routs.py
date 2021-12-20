@@ -93,7 +93,7 @@ def personal_area():
         editing = request.form.get('editing')
 
         if anonc:
-            return redirect('anons.announcement_routs.create_announcement')
+            return redirect('create_announcement')
         if editing:
             return redirect('editing_announcement')
         try:

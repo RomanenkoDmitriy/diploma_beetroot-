@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from todo.models import Announcement
 from todo import db
-from anons import announcement
+from todo.anons import announcement
 
 
 @announcement.route('/create_announcement', methods=['GET', 'POST'])
