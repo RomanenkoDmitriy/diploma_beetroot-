@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
 {% block form %}
-    <form method="post">
+   <form method="post" enctype="multipart/form-data">
         <h3><label>Title</label></h3><br>
         <input name="title"><br>
         <h3><label>Text</label></h3><br>
         <input name="text" type="text"><br>
+    <hr>
+        <input type="file" name="foto"><br>
         <input type="submit" value="Create">
+    <hr>
     </form>
 {% endblock %}
 
@@ -23,6 +26,7 @@
 {% endblock %}
 
 {% block error %}
+    {{img}}
     {{error}}
 {% endblock %}
 

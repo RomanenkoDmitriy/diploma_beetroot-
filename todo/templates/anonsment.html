@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block test %}
+    <h3>{{announcement.title}}</h3>
+    <p>{{announcement.text}}</p>
+    <h5>{{announcement.data}}</h5>
+{% endblock %}
+
+{% block error %}
+    <a href="{{ url_for('index_page') }}"><input type="button" value="Back"></a>
+{% endblock %}
