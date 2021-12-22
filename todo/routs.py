@@ -148,7 +148,7 @@ def create_announcement():
                 db.session.add(images)
                 db.session.commit()
                 avatar_img(file, path)
-            db.session.commit()
+            # db.session.commit()
             flash('Announcement created')
             return render_template('add_announcement.html', anonc=current_user.announcement_table,
                                    img=new_announcement.images_announcements)
@@ -192,10 +192,13 @@ def change_anons(id_anons):
 
     return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=id_anons).first())
 
+
 @app.route('/<int:id_anons>/announsement')
 @login_required
 def announsement(id_anons):
-    return render_template('anonsment.html', announcement=Announcement.query.filter_by(id=id_anons).first())
+    announcement = Announcement.query.filter_by(id=id_anons).first()
+    img = ImagesAnnouncement.query.filter_by(id=announcement.id).first()
+    return render_template('anonsment.html', announcement=announcement, img=img)
 
 
 
