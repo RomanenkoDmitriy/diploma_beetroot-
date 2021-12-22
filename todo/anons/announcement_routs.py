@@ -3,10 +3,10 @@ from flask_login import login_required, current_user
 
 from todo.models import Announcement
 from todo import db
-from todo.anons import announcement
+from todo.anons import anons
 
 
-@announcement.route('/create_announcement', methods=['GET', 'POST'])
+@anons.route('/create_announcement', methods=['GET', 'POST'])
 @login_required
 def create_announcement():
     title = request.form.get('title')
@@ -25,7 +25,7 @@ def create_announcement():
     return render_template('add_announcement.html', anonc=current_user.announcement_table)
 
 
-@announcement.route('/editing_announcement', methods=['GET', 'POST'])
+@anons.route('/editing_announcement', methods=['GET', 'POST'])
 @login_required
 def editing_announcement():
     change = request.form.get('change')
@@ -39,7 +39,7 @@ def editing_announcement():
     return render_template('editing_announsement.html', announsement=current_user.announcement_table)
 
 
-@announcement.route('/<int:id_anons>/change_anons', methods=['GET', 'POST'])
+@anons.route('/<int:id_anons>/change_anons', methods=['GET', 'POST'])
 @login_required
 def change_anons(id_anons):
     title = request.form.get('title')

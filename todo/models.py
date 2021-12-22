@@ -53,7 +53,7 @@ class Announcement(db.Model):
     text = db.Column(db.TEXT, nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    images_announcement = db.relationship('ImagesAnnouncement', backref='announcement')
+    images_announcements = db.relationship('ImagesAnnouncement', backref='announcement')
 
     def change_title(self, title):
         self.title = title
@@ -75,6 +75,9 @@ class ImagesAnnouncement(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     path_img = db.Column(db.String)
-    id_announcement = db.Column(db.Integer, db.ForeignKey('announcement.id'), nullable=False)
+    id_announcement = db.Column(db.Integer, db.ForeignKey('announcement.id'))
+
+
+
 
 

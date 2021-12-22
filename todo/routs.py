@@ -6,15 +6,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import login_user, login_required, logout_user, current_user
 
-from todo import app, UPLOAD_FOLDER
-from todo.models import User, db, Announcement, ImagesAnnouncement
-from .utils.utils import avatar_img
+from todo import app, db
+from todo.models import User, Announcement, ImagesAnnouncement
+from todo.utils.utils import avatar_img
 
 
 @app.route('/')
 def index_page():
     if Announcement.query.all():
-        return render_template('index.html', announcement=Announcement.query.order_by(Announcement.date.desc()).all())
+        image = ImagesAnnouncement.query.all()
+        return render_template('index.html', announcement=Announcement.query.order_by(Announcement.date.desc()).all(),
+                               img=image)
     return render_template('index.html')
 
 
@@ -47,16 +49,19 @@ def login_user_page():
     password = request.form.get('password')
 
     if login and password:
+
         user_new = User.query.filter_by(login=login).first()
+        if user_new is not None:
 
-        if check_password_hash(user_new.user_hash, password):
-            login_user(user_new)
+            if check_password_hash(user_new.user_hash, password):
+                login_user(user_new)
 
-            # redirect_page = request.args.get('next')
-            return redirect(url_for('index_page'))
+                # redirect_page = request.args.get('next')
+                return redirect(url_for('index_page'))
+            else:
+                flash('Password is incorrect')
         else:
-            flash('Username or password is incorrect')
-
+            flash('Invalid login')
     else:
         flash('Enter login and password')
 
@@ -67,7 +72,7 @@ def login_user_page():
 @login_required
 def user_logout():
     logout_user()
-    return render_template('index.html')
+    return redirect(url_for('index_page'))
 
 
 @app.route('/secret')
@@ -118,64 +123,80 @@ def personal_area():
                 path = join(dirname(realpath(__file__)), 'static', secure_filename(file.filename))
                 avatar_img(file, path)
                 # file.save(path)
-                # user.add_avatar(file.filename)
+                user.add_avatar(file.filename)
         except Exception as e:
             db.session.rollback()
 
     return render_template('personal_area.html')
 
 
-# @app.route('/create_announcement', methods=['GET', 'POST'])
-# @login_required
-# def create_announcement():
-#     title = request.form.get('title')
-#     text = request.form.get('text')
-#
-#     if request.method == 'POST':
-#         new_announcement = Announcement(title=title, text=text, user_id=current_user.id)
-#         try:
-#             db.session.add(new_announcement)
-#             db.session.commit()
-#             flash('Announcement created')
-#             return render_template('add_announcement.html', anonc=current_user.announcement_table)
-#         except Exception as e:
-#             db.session.rollback()
-#             return render_template('add_announcement.html', error=str(e))
-#     return render_template('add_announcement.html', anonc=current_user.announcement_table)
-#
-#
-# @app.route('/editing_announcement', methods=['GET', 'POST'])
-# @login_required
-# def editing_announcement():
-#     change = request.form.get('change')
-#     del_anons = request.form.get('delete')
-#     if request.method == 'POST':
-#         if del_anons:
-#             anons = Announcement.query.filter_by(id=del_anons).first()
-#             anons.del_announcement()
-#         elif change:
-#             return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=change).first())
-#     return render_template('editing_announsement.html', announsement=current_user.announcement_table)
-#
-#
-# @app.route('/<int:id_anons>/change_anons', methods=['GET', 'POST'])
-# @login_required
-# def change_anons(id_anons):
-#     title = request.form.get('title')
-#     text = request.form.get('text')
-#
-#     if request.method == 'POST':
-#         anons = Announcement.query.filter_by(id=id_anons).first()
-#
-#         if title and text:
-#             anons.change_title(title)
-#             anons.change_text(text)
-#         elif title:
-#             anons.change_title(title)
-#         elif text:
-#             anons.change_text(text)
-#
-#     return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=id_anons).first())
+@app.route('/create_announcement', methods=['GET', 'POST'])
+@login_required
+def create_announcement():
+    title = request.form.get('title')
+    text = request.form.get('text')
+    file = request.files.get('foto')
+
+    if request.method == 'POST':
+        new_announcement = Announcement(title=title, text=text, user_id=current_user.id)
+        try:
+            db.session.add(new_announcement)
+            db.session.commit()
+            if file is not None:
+                path = join(dirname(realpath(__file__)), 'static', secure_filename(file.filename))
+                images = ImagesAnnouncement(path_img=file.filename, id_announcement=new_announcement.id)
+                db.session.add(images)
+                db.session.commit()
+                avatar_img(file, path)
+            db.session.commit()
+            flash('Announcement created')
+            return render_template('add_announcement.html', anonc=current_user.announcement_table,
+                                   img=new_announcement.images_announcements)
+        except Exception as e:
+            db.session.rollback()
+            return render_template('add_announcement.html', error=str(e))
+
+    return render_template('add_announcement.html', anonc=current_user.announcement_table)
+
+
+@app.route('/editing_announcement', methods=['GET', 'POST'])
+@login_required
+def editing_announcement():
+    change = request.form.get('change')
+    del_anons = request.form.get('delete')
+    if request.method == 'POST':
+        if del_anons:
+            anons = Announcement.query.filter_by(id=del_anons).first()
+            anons.del_announcement()
+        elif change:
+            return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=change).first())
+    return render_template('editing_announsement.html', announsement=current_user.announcement_table)
+
+
+@app.route('/<int:id_anons>/change_anons', methods=['GET', 'POST'])
+@login_required
+def change_anons(id_anons):
+    title = request.form.get('title')
+    text = request.form.get('text')
+
+    if request.method == 'POST':
+        anons = Announcement.query.filter_by(id=id_anons).first()
+
+        if title and text:
+            anons.change_title(title)
+            anons.change_text(text)
+        elif title:
+            anons.change_title(title)
+        elif text:
+            anons.change_text(text)
+
+    return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=id_anons).first())
+
+@app.route('/<int:id_anons>/announsement')
+@login_required
+def announsement(id_anons):
+    return render_template('anonsment.html', announcement=Announcement.query.filter_by(id=id_anons).first())
+
 
 
 # @app.after_request

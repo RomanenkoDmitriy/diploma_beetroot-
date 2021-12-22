@@ -1,4 +1,4 @@
 from flask import Blueprint
 
 
-announcement = Blueprint('anons', __name__)
+anons = Blueprint('announcement', __name__)

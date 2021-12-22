@@ -8,11 +8,14 @@
     <div>
 
         {% for anonc in announcement %}
-            <div>
+            <a href="{{url_for('announsement', id_anons=anonc.id)}}" class="index_page"><div>
+                {% if img%}
+                    <img src="{{ url_for('static', filename=anonc.announcement) }}">
+                {% endif %}
                 <h2>{{anonc.title}}</h2>
                 <p>{{anonc.text[:50]}}</p>
                 <h5>{{anonc.date}}</h5>
-            </div>
+            </div></a>
         {% endfor %}
 
     </div>
@@ -21,5 +24,5 @@
 
 
 {% block error %}
-    {{resp}}
+    {{e}}
 {% endblock %}
