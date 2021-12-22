@@ -71,11 +71,14 @@ class Announcement(db.Model):
 
 
 class ImagesAnnouncement(db.Model):
-    __tablename__ = 'images_announcement'
+    __tablename__ = 'imagesannouncement'
 
     id = db.Column(db.Integer, primary_key=True)
     path_img = db.Column(db.String)
     id_announcement = db.Column(db.Integer, db.ForeignKey('announcement.id'))
+
+    def __str__(self):
+        return f'{self.path_img}'
 
 
 

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block test %}
+    <img src="{{ url_for('static', filename=img.path_img)}}" alt="{{img.path_img}}">
     <h3>{{announcement.title}}</h3>
     <p>{{announcement.text}}</p>
     <h5>{{announcement.data}}</h5>
