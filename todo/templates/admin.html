@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block test %}
+    {% for user in users %}
+        <ol>
+            <a href="{{url_for('data_user', id_user=user.id)}}" class="index_page"><li>
+                <h4>{{user.login}}</h4>
+                <h5>{{user.email}}</h5>
+                <p>{{user.data}}</p>
+            </li></a>
+        </ol>
+    {% endfor %}
+{% endblock %}

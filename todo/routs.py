@@ -1,14 +1,32 @@
+import os
 from os.path import join, dirname, realpath
+from random import randint
 
 import flask_login
+# from flask_security import SQLAlchemyUserDatastore, login_required, Security
 from flask import request, render_template, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import login_user, login_required, logout_user, current_user
+# from  flask_admin import helpers
 
 from todo import app, db
 from todo.models import User, Announcement, ImagesAnnouncement
-from todo.utils.utils import avatar_img
+from todo.utils.utils import avatar_img, answer_bal
+
+
+# user_datastore = SQLAlchemyUserDatastore(db,  User,  RoleUser)
+# security = Security(app, user_datastore)
+
+
+# @security.context_processor
+# def security_context_processor():
+#     return dict(
+#         admin_base_template=admin.base_template,
+#         admin_view=admin.index_view,
+#         h=helpers,
+#         get_url=url_for
+#     )
 
 
 @app.route('/')
@@ -29,6 +47,7 @@ def register():
         email = request.form['email']
         user_hash = generate_password_hash(password)
         if password == password1:
+            # user_datastore.create_user(login=login, user_hash=user_hash, email=email)
             user_db = User(login=login, user_hash=user_hash, email=email)
             try:
                 db.session.add(user_db)
@@ -43,20 +62,26 @@ def register():
     return render_template('register.html', users=User.query.all())
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login_user', methods=['GET', 'POST'])
 def login_user_page():
-    login = request.form.get('login')
-    password = request.form.get('password')
+    login_form = request.form.get('login')
+    password_form = request.form.get('password')
 
-    if login and password:
+    if login_form and password_form:
+        # path = os.path.join(os.getcwd(), 'password_admin.txt')
+        # with open(path, 'r') as file:
+        #     file_list = list(file)
+        #     login_adm = file_list[0]
+        #     password_adm = file_list[1]
 
-        user_new = User.query.filter_by(login=login).first()
+        user_new = User.query.filter_by(login=login_form).first()
         if user_new is not None:
 
-            if check_password_hash(user_new.user_hash, password):
+            if check_password_hash(user_new.user_hash, password_form):
                 login_user(user_new)
-
-                # redirect_page = request.args.get('next')
+                # if request.args.get('next'):
+                    # redirect_page = request.args.get('next')
+                    # return redirect(url_for(redirect_page))
                 return redirect(url_for('index_page'))
             else:
                 flash('Password is incorrect')
@@ -193,12 +218,63 @@ def change_anons(id_anons):
     return render_template('change_anons.html', chenge_anons=Announcement.query.filter_by(id=id_anons).first())
 
 
-@app.route('/<int:id_anons>/announsement')
+@app.route('/<int:id_anons>/announsement', methods=['GET', 'POST'])
 @login_required
 def announsement(id_anons):
     announcement = Announcement.query.filter_by(id=id_anons).first()
     img = ImagesAnnouncement.query.filter_by(id=announcement.id).first()
+    if request.method == 'POST':
+        answ = request.form.get('answ')
+        if answ:
+            answer = answer_bal()
+            flash(answer)
     return render_template('anonsment.html', announcement=announcement, img=img)
+
+
+@app.route('/admin/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        login_form = request.form.get('login')
+        password_form = request.form.get('password')
+        admin = User.query.filter_by(active=True, login=login_form).first()
+        if admin:
+            if check_password_hash(admin.user_hash, password_form):
+                return redirect(url_for('admin_page'))
+            else:
+                flash('Invalid password')
+        else:
+            flash('Invalid login')
+    return render_template('admin_login.html')
+
+
+@app.get('/admin/admin_page')
+def admin_page():
+    return render_template('admin.html', users=User.query.all())
+
+@app.route('/admin/change_anons/<int:id_user>', methods=['GET', 'POST'])
+def data_user(id_user):
+    user = User.query.filter_by(id=id_user).first()
+    anons = Announcement.query.filter_by(user_id=id_user).all()
+    if request.method == 'POST':
+        del_user = request.form.get('del')
+        change_pass = request.form.get('password')
+        del_anons = request.form.get('del_an')
+        flash(str(del_anons))
+        try:
+            if del_user:
+                user.del_user()
+                for anon in anons:
+                    anon.del_announcement()
+            if change_pass:
+                user.change_password(generate_password_hash(change_pass))
+            if del_anons:
+                an = Announcement.query.filter_by(id=del_anons).first()
+                an.del_announcement()
+            # return render_template('data_user.html', user=user, anons=anons)
+        except Exception as e:
+            flash(str(e))
+            db.session.rollback()
+    return render_template('data_user.html', user=user, anons=anons)
 
 
 
