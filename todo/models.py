@@ -1,6 +1,12 @@
 from datetime import datetime
+import os
 
-from flask_login import UserMixin
+from flask_login import current_user, UserMixin
+# from flask_admin.contrib.sqla import ModelView
+# from flask import request, redirect, url_for
+from werkzeug.security import check_password_hash
+# from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore
+from flask_admin import Admin
 
 from todo import db, manager
 
@@ -8,6 +14,11 @@ from todo import db, manager
 @manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+
+# roles_users = db.Table('roles_users',
+#                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+#                        db.Column('role_id', db.Integer(), db.ForeignKey('role_user.id')))
 
 
 class User (db.Model, UserMixin):
@@ -18,7 +29,9 @@ class User (db.Model, UserMixin):
     email = db.Column(db.String, unique=True)
     data = db.Column(db.DateTime, default=datetime.utcnow())
     avatar = db.Column(db.String)
+    active = db.Column(db.Boolean())
     announcement_table = db.relationship('Announcement', backref='user')
+    # roles = db.relationship('RoleUser', secondary=roles_users, backref=db.backref('user', lazy='dynamic'))
 
     def change_login(self, login):
         self.login = login
@@ -43,6 +56,20 @@ class User (db.Model, UserMixin):
         self.avatar = path
         db.session.add(self)
         db.session.commit()
+
+
+# class RoleUser(db.Model, RoleMixin):
+#     __tablename__ = 'role_user'
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String)
+#
+#     def __str__(self):
+#         return self.name
+
+
+
+
+
 
 
 
@@ -79,6 +106,36 @@ class ImagesAnnouncement(db.Model):
 
     def __str__(self):
         return f'{self.path_img}'
+
+
+# class MyModelView(ModelView):
+#
+#     def is_accessible(self):
+#         return current_user.has_role('admin')
+#
+#     def inaccessible_callback(self, name, **kwargs):
+#         return redirect(url_for('login_user_page', next=request.url))
+
+
+# class HomeAdmi(AdminIndexView):
+#     def is_accessible(self):
+#         return current_user.has_role('admin')
+#
+#     def inaccessible_callback(self, name, **kwargs):
+#         return redirect(url_for('login', next=request.url))
+
+
+# class MyAdmin:
+#     def __init__(self, login, password):
+#         self.login = login
+#         self.password = password
+
+
+# admin.add_view(MyModelView(User, db.session))
+# admin.add_view(MyModelView(Announcement, db.session))
+# admin.add_view(MyModelView(ImagesAnnouncement, db.session))
+
+
 
 
 

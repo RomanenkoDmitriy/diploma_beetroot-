@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+
+{% block test %}
+    <form method="post">
+        <input type="submit" value="Delete user" name="del"><hr>
+    </form>
+    <form method="post">
+        <h3><label>Change password user</label></h3>
+        <input name="password">
+        <input type="submit" value="Change ">
+    </form><hr>
+    {%for an in anons %}
+        <h4>{{user.login}}</h4>
+        <ul>
+            <li>{{an.title}}</li>
+            <li>{{an.text}}</li>
+            <li>{{an.date}}</li>
+        </ul>
+        <form method="post">
+            <input type="hidden" name="del_an" value="{{an.id}}">
+            <input type="submit" value="Delete announcement" name="del_anons">
+        </form><hr>
+    {% endfor %}
+
+{% endblock %}
+
+{% block error %}
+{% endblock %}

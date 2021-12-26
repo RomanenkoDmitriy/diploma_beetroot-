@@ -9,4 +9,20 @@
 
 {% block error %}
     <a href="{{ url_for('index_page') }}"><input type="button" value="Back"></a>
+    <form method="post">
+        <input type="hidden" value="answ">
+        <input type="submit" name="answ" value="Doubt">
+    </form>
+{% endblock %}
+
+{% block messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 {% endblock %}
