@@ -1,6 +1,4 @@
-import os
 from os.path import join, dirname, realpath
-from random import randint
 
 import flask_login
 # from flask_security import SQLAlchemyUserDatastore, login_required, Security
@@ -36,6 +34,12 @@ def index_page():
         return render_template('index.html', announcement=Announcement.query.order_by(Announcement.date.desc()).all(),
                                img=image)
     return render_template('index.html')
+
+
+@app.route('/<string:chapter>')
+def announcement_chapter(chapter):
+    announcement = Announcement.query.filter_by(chapter=chapter).all()
+    return render_template('index.html', announcement=announcement)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -161,9 +165,10 @@ def create_announcement():
     title = request.form.get('title')
     text = request.form.get('text')
     file = request.files.get('foto')
+    chapter = request.form.get('chapter')
 
     if request.method == 'POST':
-        new_announcement = Announcement(title=title, text=text, user_id=current_user.id)
+        new_announcement = Announcement(title=title, text=text, chapter=chapter, user_id=current_user.id)
         try:
             db.session.add(new_announcement)
             db.session.commit()

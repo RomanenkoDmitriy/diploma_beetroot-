@@ -5,10 +5,10 @@
 
 {% block messages %}
 
-    <div>
+    <div class="an">
 
         {% for anonc in announcement %}
-            <a href="{{url_for('announsement', id_anons=anonc.id)}}" class="index_page"><div>
+            <a href="{{url_for('announsement', id_anons=anonc.id)}}" class="index_page"><div class="in_a">
                 {% if img%}
                     <img src="{{ url_for('static', filename=anonc.images_announcements) }}"
                          alt="{{anonc.images_announcements}}">
