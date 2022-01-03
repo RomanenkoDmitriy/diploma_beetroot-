@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from flask_login import login_user, login_required, logout_user, current_user
 # from  flask_admin import helpers
 
-from todo import app, db
+from todo import app, db, logger
 from todo.models import User, Announcement, ImagesAnnouncement
 from todo.utils.utils import avatar_img, answer_bal
 
@@ -29,15 +29,24 @@ from todo.utils.utils import avatar_img, answer_bal
 
 @app.route('/')
 def index_page():
+    app.logger.warning('info')
     if Announcement.query.all():
-        image = ImagesAnnouncement.query.all()
-        return render_template('index.html', announcement=Announcement.query.order_by(Announcement.date.desc()).all(),
-                               img=image)
+        try:
+            image = ImagesAnnouncement.query.all()
+            return render_template('index.html',
+                                   announcement=Announcement.query.order_by(Announcement.date.desc()).all(),
+                                   img=image)
+        except Exception as e:
+            logger.error(str(e))
+        # return render_template('index.html', announcement=Announcement.query.order_by(Announcement.date.desc()).all(),
+        #                        img=image)
+    # logger.debug('info')
     return render_template('index.html')
 
 
 @app.route('/<string:chapter>')
 def announcement_chapter(chapter):
+    logger.info('info')
     announcement = Announcement.query.filter_by(chapter=chapter).all()
     return render_template('index.html', announcement=announcement)
 
