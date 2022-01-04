@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block form %}
+{% block title %}
+    {{title}}
 {% endblock %}
 
 {% block messages %}
@@ -9,13 +10,14 @@
 
         {% for anonc in announcement %}
             <a href="{{url_for('announsement', id_anons=anonc.id)}}" class="index_page"><div class="in_a">
-                {% if img%}
+
                     <img src="{{ url_for('static', filename=anonc.images_announcements) }}"
-                         alt="{{anonc.images_announcements}}">
-                {% endif %}
+                         alt="No images">
+
                 <h2>{{anonc.title}}</h2>
                 <p>{{anonc.text[:50]}}</p>
-                <h5>{{anonc.date}}</h5>
+                <h6>{{anonc.date}}</h6>
+
             </div></a>
         {% endfor %}
 
@@ -23,7 +25,3 @@
 
     {% endblock %}
 
-
-{% block error %}
-
-{% endblock %}

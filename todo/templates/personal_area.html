@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+
 {% block form %}
 
     <form method="post">
@@ -24,18 +41,6 @@
         <input type="submit" value="Chenge">
     </form>
 
-{% block messages %}
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-{% endblock %}
-
     <form method="post">
         <h3><label>Change password</label></h3><br>
         <label>Old password</label><br>
@@ -52,12 +57,8 @@
     </form>
 
     <form method="post">
-          <h3><label>Delete account</label></h3><br>
+        <h3><label>Delete account</label></h3><br>
         <input name="delete" type="hidden" value="delete"><br>
         <input type="submit" value="Delete">
     </form>
-{% endblock %}
-
-{% block error %}
-    {{path}}
 {% endblock %}
