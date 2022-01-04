@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
-    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/stylesheet.css') }}">
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+{% block nav %}
     <nav>
         <div class="nav">
-            <div class="nav_index">
+            <div>
                 <a href="{{ url_for('index_page') }}">Index</a>
                 <a href="{{ url_for('announcement_chapter', chapter='purchase') }}">Purchase</a>
                 <a href="{{ url_for('announcement_chapter', chapter='sale') }}">Sale</a>
@@ -18,7 +19,7 @@
                 <a href="{{ url_for('login_user_page') }}" >Login</a>
                 {% if current_user.login %}
                     <a href="{{ url_for('user_logout') }}">logout</a>
-                    <a href="{{ url_for('personal_area') }}">Personal area</a>
+                    <a href="{{ url_for('personal_area') }}">{{current_user.login}}</a>
                     {% if current_user.avatar %}
                         <img src="{{ url_for('static', filename=current_user.avatar) }}">
                     {% endif %}
@@ -26,7 +27,7 @@
             </div>
         </div>
     </nav>
-{% block nav %}
+
 {% endblock %}
 
 {% block form %}

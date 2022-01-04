@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% block test %}
     <img src="{{ url_for('static', filename=img.path_img)}}" alt="{{img.path_img}}">
     <h3>{{announcement.title}}</h3>
     <p>{{announcement.text}}</p>
-    <h5>{{announcement.data}}</h5>
+    <h5>{{announcement.contact_details}}</h5>
+    <h6>{{announcement.date}}</h6><hr>
 {% endblock %}
 
 {% block error %}

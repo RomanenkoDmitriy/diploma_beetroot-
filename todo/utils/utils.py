@@ -1,6 +1,5 @@
 import os
 import json
-from os.path import join, dirname, realpath
 from random import randint, choice
 
 from PIL import Image
@@ -14,7 +13,6 @@ def avatar_img(file, path):
 
 def answer_bal():
     dict_answ = None
-    # path = join(dirname(realpath(__file__)), '..', 'ball_answers', 'answers.json')
     path = os.path.abspath('ball_answers/answers.json')
     with open(path, 'r') as file:
         dict_answ = json.load(file)

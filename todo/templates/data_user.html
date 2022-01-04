@@ -1,5 +1,19 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block nav %}
+          <div class="nav_index">
+                <a href="{{ url_for('index_page') }}">Index</a>
+                <a href="{{ url_for('admin_user') }}">Admin</a>
+                <a href="{{ url_for('admin_user') }}">User</a>
+                <a href="{{ url_for('all_admins') }}">Admin user</a>
+                <a href="{{ url_for('admin_anons') }}">Announcement</a>
+            </div>
+{% endblock %}
+
 {% block messages %}
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -19,8 +33,11 @@
     </form>
     <form method="post">
         <h3><label>Change password user</label></h3>
-        <input name="password">
-        <input type="submit" value="Change ">
+        <input name="password"><hr>
+        <h3><label>Appoint an administrator</label></h3><br>
+        <h5><input type="checkbox" name="admin_appoint" value="appoint">Appoint</h5>
+        <button type="submit">Change</button><hr>
+
     </form><hr>
     {%for an in anons %}
         <h4>{{user.login}}</h4>

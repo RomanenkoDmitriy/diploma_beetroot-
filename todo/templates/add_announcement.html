@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% block form %}
    <form method="post" enctype="multipart/form-data">
         <h3><label>Chapter</label></h3><br>
@@ -7,8 +11,11 @@
        <h5><input type="checkbox" name="chapter" value="sale">Sale</h5>
         <h3><label>Title</label></h3><br>
         <input name="title"><br>
+        <h3><label>Contact details</label></h3><br>
+        <input name="contact" type="tel"><br>
         <h3><label>Text</label></h3><br>
-        <input name="text" type="text"><br>
+       <textarea name="text"></textarea><br>
+
     <hr>
         <input type="file" name="foto"><br>
         <input type="submit" value="Create">

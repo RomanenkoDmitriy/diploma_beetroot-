@@ -1,13 +1,43 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block nav %}
+          <div class="nav_index" >
+                <a href="{{ url_for('index_page') }}" class="adm_nav">Index</a>
+                <a href="{{ url_for('admin_user') }}" class="adm_nav">Admin</a>
+                <a href="{{ url_for('admin_user') }}" class="adm_nav">User</a>
+                <a href="{{ url_for('all_admins') }}" class="adm_nav">Admin user</a>
+                <a href="{{ url_for('admin_anons') }}" class="adm_nav">Announcement</a>
+            </div>
+{% endblock %}
+
 {% block test %}
-    {% for user in users %}
-        <ol>
-            <a href="{{url_for('data_user', id_user=user.id)}}" class="index_page"><li>
-                <h4>{{user.login}}</h4>
-                <h5>{{user.email}}</h5>
-                <p>{{user.data}}</p>
-            </li></a>
-        </ol>
-    {% endfor %}
+    {% if users %}
+        {% for user in users %}
+            <ol>
+                <a href="{{url_for('data_user', id_user=user.id)}}" class="index_page"><li>
+                    <h4>{{user.login}}</h4>
+                    <h5>{{user.email}}</h5>
+                    <p>{{user.data}}</p>
+                </li></a>
+            </ol>
+        {% endfor %}
+    {% elif anons %}
+        {% for el in anons %}
+            <ol>
+                <li>
+                    <h4>{{el.title}}</h4>
+                    <h5>{{el.text}}</h5>
+                    <p>{{el.date}}</p>
+                    <form method="post">
+                        <input name="delete" type="hidden" value="{{el.id}}"><br>
+                        <input type="submit" value="Delete">
+                    </form>
+                </li>
+            </ol>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
