@@ -9,7 +9,7 @@
     <h3>{{announcement.title}}</h3>
     <p>{{announcement.text}}</p>
     <h5>{{announcement.contact_details}}</h5>
-    <h6>{{announcement.date}}</h6><hr>
+    <h6>{{announcement.date.strftime('%d-%m-%Y %H:%M')}}</h6><hr>
 {% endblock %}
 
 {% block error %}
