@@ -4,6 +4,8 @@ from random import randint, choice
 
 from PIL import Image
 
+from todo import logger, app
+
 
 def avatar_img(file, path):
     size = (80, 100)
@@ -27,7 +29,16 @@ def answer_bal():
     else:
         answer = dict_answ['negative']
         return choice(dict_answ['negative'])
-    # return choice(answer)
+
+
+def my_login_decorator(func):
+    try:
+        def wrapper(*args):
+            return func(*args)
+        app.logger.info(f'{func.__name__} OK')
+    except Exception as e:
+        app.logger.error(str(e))
+    return wrapper
 
 
 if __name__ == '__main__':

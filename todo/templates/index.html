@@ -4,10 +4,21 @@
     {{title}}
 {% endblock %}
 
+{% block test %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
 {% block messages %}
 
     <div class="an">
-
         {% for anonc in announcement %}
             <a href="{{url_for('announsement', id_anons=anonc.id)}}" class="index_page"><div class="in_a">
 
@@ -16,9 +27,9 @@
 
                 <h2>{{anonc.title}}</h2>
                 <p>{{anonc.text[:50]}}</p>
-                <h6>{{anonc.date}}</h6>
+                <h6>{{anonc.date.strftime('%d-%m-%Y %H:%M')}}</h6>
 
-            </div></a>
+            </div></a><hr>
         {% endfor %}
 
     </div>
