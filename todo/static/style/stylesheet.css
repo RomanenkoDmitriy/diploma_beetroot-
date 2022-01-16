@@ -1,0 +1,41 @@
+body {
+    background: azure;
+}
+
+.index_page{
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    /*display: flex;*/
+}
+
+.nav {
+    display: flex;
+    background: aqua;
+}
+
+.nav_user {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.an {
+    margin-top: 50px;
+
+}
+
+.in_a {
+    margin: 20px;
+    background: beige;
+}
+
+.nav_index {
+    margin: 10px;
+    background: aliceblue;
+}
+
+.adm_nav {
+    margin-left: 10px;
+    text-decoration: none;
+    color: royalblue;
+}
